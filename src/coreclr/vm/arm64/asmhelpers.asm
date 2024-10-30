@@ -936,7 +936,6 @@ Fail
     mov x12, x0
 
     EPILOG_WITH_TRANSITION_BLOCK_TAILCALL
-    PATCH_LABEL ExternalMethodFixupPatchLabel
     EPILOG_BRANCH_REG   x12
 
     NESTED_END
@@ -1012,7 +1011,8 @@ Fail
 
     LEAF_ENTRY JIT_GetDynamicNonGCStaticBase_SingleAppDomain
     ; If class is not initialized, bail to C++ helper
-    ldr x1, [x0, #OFFSETOF__DynamicStaticsInfo__m_pNonGCStatics]
+    add x1, x0, #OFFSETOF__DynamicStaticsInfo__m_pNonGCStatics
+    ldar x1, [x1]
     tbnz x1, #0, CallHelper1
     mov x0, x1
     ret lr
@@ -1026,7 +1026,8 @@ CallHelper1
 
     LEAF_ENTRY JIT_GetDynamicGCStaticBase_SingleAppDomain
     ; If class is not initialized, bail to C++ helper
-    ldr x1, [x0, #OFFSETOF__DynamicStaticsInfo__m_pGCStatics]
+    add x1, x0, #OFFSETOF__DynamicStaticsInfo__m_pGCStatics
+    ldar x1, [x1]
     tbnz x1, #0, CallHelper2
     mov x0, x1
     ret lr
